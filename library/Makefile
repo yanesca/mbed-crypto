@@ -101,6 +101,10 @@ OBJS_TLS=	debug.o		net_sockets.o		\
 		ssl_srv.o	ssl_ticket.o		\
 		ssl_tls.o
 
+include ../3rdparty/Makefile.inc
+LOCAL_CFLAGS+=$(THIRDPARTY_INCLUDES)
+OBJS_CRYPTO+=$(THIRDPARTY_CRYPTO_OBJECTS)
+
 .SILENT:
 
 .PHONY: all static shared clean
@@ -198,11 +202,11 @@ libmbedcrypto.dll: $(OBJS_CRYPTO)
 
 .c.o:
 	echo "  CC    $<"
-	$(CC) $(LOCAL_CFLAGS) $(CFLAGS) -c $<
+	$(CC) $(LOCAL_CFLAGS) $(CFLAGS) -o $@ -c $<
 
 clean:
 ifndef WINDOWS
-	rm -f *.o libmbed*
+	rm -f *.o libmbed* $(OBJS_CRYPTO)
 else
 	if exist *.o del /Q /F *.o
 	if exist libmbed* del /Q /F libmbed*

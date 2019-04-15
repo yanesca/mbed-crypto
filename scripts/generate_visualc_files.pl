@@ -19,9 +19,10 @@ my $vsx_sln_tpl_file = "scripts/data_files/vs2010-sln-template.sln";
 my $vsx_sln_file = "$vsx_dir/mbedTLS.sln";
 
 my $programs_dir = 'programs';
-my $mbedtls_header_dir = 'include/mbedtls';
 my $psa_header_dir = 'include/psa';
 my $source_dir = 'library';
+my @header_dirs = ('include/mbedtls', '3rdparty/everest/include/everest');
+my @source_dirs = ('library', '3rdparty/everest/library', '3rdparty/everest/library/kremlib', '3rdparty/everest/library/legacy');
 
 # Need windows line endings!
 my $vsx_hdr_tpl = <<EOT;
@@ -53,10 +54,10 @@ EOT
 exit( main() );
 
 sub check_dirs {
+    foreach my $d (@header_dirs) { if (not (-d $d)) { return 0; } }
+    foreach my $d (@source_dirs) { if (not (-d $d)) { return 0; } }
     return -d $vsx_dir
-        && -d $mbedtls_header_dir
         && -d $psa_header_dir
-        && -d $source_dir
         && -d $programs_dir;
 }
 
@@ -197,12 +198,16 @@ sub main {
     del_vsx_files();
 
     my @app_list = get_app_list();
-    my @mbedtls_headers = <$mbedtls_header_dir/*.h>;
     my @psa_headers = <$psa_header_dir/*.h>;
     my @source_headers = <$source_dir/*.h>;
-    my @sources = <$source_dir/*.c>;
-    map { s!/!\\!g } @mbedtls_headers;
     map { s!/!\\!g } @psa_headers;
+
+    my @mbedtls_headers = ();
+    my @sources = ();
+    foreach my $d (@header_dirs) { push @mbedtls_headers, <$d/*.h>; }
+    foreach my $d (@source_dirs) { push @sources, <$d/*.c>; }
+    @sources = grep !/3rdparty\/everest\/library\/Hacl_Curve25519.c/, @sources;
+    map { s!/!\\!g } @mbedtls_headers;
     map { s!/!\\!g } @sources;
 
     gen_app_files( @app_list );

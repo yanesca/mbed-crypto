@@ -135,6 +135,14 @@ Features
      disabled by default. See its API documentation in config.h for additional
      steps you have to take when enabling it.
 
+Features
+   * New implementation of X25519 (ECDH using Curve25519) from Project Everest
+     (https://project-everest.github.io/). It can be enabled at compile time
+     with MBEDTLS_ECDH_VARIANT_EVEREST_ENABLED. This implementation is formally
+     verified and significantly faster, but is only supported on x86 platforms
+     (32-bit and 64-bit) using GCC, Clang or Visual Studio. Contributed by
+     Christoph Wintersteiger from Microsoft Research.
+
 API Changes
    * The following functions in the random generator modules have been
      deprecated and replaced as shown below. The new functions change
@@ -157,6 +165,11 @@ API Changes
      that it is now optional with the MBEDTLS_CHECK_PARAMS flag which by default
      is off. That means that checks which were previously present by default
      will no longer be.
+   * The functions mbedtls_ecp_curve_list() and mbedtls_ecp_grp_id_list() now
+     list all curves for which at least one of ECDH or ECDSA is supported, not
+     just curves for which both are supported. Call mbedtls_ecdsa_can_do() or
+     mbedtls_ecdh_can_do() on each result to check whether each algorithm is
+     supported.
 
 New deprecations
    * Deprecate mbedtls_ctr_drbg_update and mbedtls_hmac_drbg_update

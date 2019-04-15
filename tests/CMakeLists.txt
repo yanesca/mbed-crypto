@@ -72,7 +72,6 @@ if(MSVC)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /WX-")
 endif(MSVC)
 
-<<<<<<< HEAD
 add_test_suite(aes aes.ecb)
 add_test_suite(aes aes.cbc)
 add_test_suite(aes aes.cfb)
