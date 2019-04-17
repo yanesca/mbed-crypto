@@ -595,48 +595,6 @@ component_test_everest () {
     make test
 }
 
-component_test_small_ssl_out_content_len () {
-    msg "build: small SSL_OUT_CONTENT_LEN (ASan build)"
-    scripts/config.pl set MBEDTLS_SSL_IN_CONTENT_LEN 16384
-    scripts/config.pl set MBEDTLS_SSL_OUT_CONTENT_LEN 4096
-    CC=gcc cmake -D CMAKE_BUILD_TYPE:String=Asan .
-    make
-
-    msg "test: small SSL_OUT_CONTENT_LEN - ssl-opt.sh MFL and large packet tests"
-    if_build_succeeded tests/ssl-opt.sh -f "Max fragment\|Large packet"
-}
-
-component_test_small_ssl_in_content_len () {
-    msg "build: small SSL_IN_CONTENT_LEN (ASan build)"
-    scripts/config.pl set MBEDTLS_SSL_IN_CONTENT_LEN 4096
-    scripts/config.pl set MBEDTLS_SSL_OUT_CONTENT_LEN 16384
-    CC=gcc cmake -D CMAKE_BUILD_TYPE:String=Asan .
-    make
-
-    msg "test: small SSL_IN_CONTENT_LEN - ssl-opt.sh MFL tests"
-    if_build_succeeded tests/ssl-opt.sh -f "Max fragment"
-}
-
-component_test_small_ssl_dtls_max_buffering () {
-    msg "build: small MBEDTLS_SSL_DTLS_MAX_BUFFERING #0"
-    scripts/config.pl set MBEDTLS_SSL_DTLS_MAX_BUFFERING 1000
-    CC=gcc cmake -D CMAKE_BUILD_TYPE:String=Asan .
-    make
-
-    msg "test: small MBEDTLS_SSL_DTLS_MAX_BUFFERING #0 - ssl-opt.sh specific reordering test"
-    if_build_succeeded tests/ssl-opt.sh -f "DTLS reordering: Buffer out-of-order hs msg before reassembling next, free buffered msg"
-}
-
-component_test_small_mbedtls_ssl_dtls_max_buffering () {
-    msg "build: small MBEDTLS_SSL_DTLS_MAX_BUFFERING #1"
-    scripts/config.pl set MBEDTLS_SSL_DTLS_MAX_BUFFERING 240
-    CC=gcc cmake -D CMAKE_BUILD_TYPE:String=Asan .
-    make
-
-    msg "test: small MBEDTLS_SSL_DTLS_MAX_BUFFERING #1 - ssl-opt.sh specific reordering test"
-    if_build_succeeded tests/ssl-opt.sh -f "DTLS reordering: Buffer encrypted Finished message, drop for fragmented NewSessionTicket"
-}
-
 component_test_full_cmake_clang () {
     msg "build: cmake, full config, clang" # ~ 50s
     scripts/config.pl full
