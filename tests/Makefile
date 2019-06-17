@@ -1,7 +1,6 @@
 
 # To compile on SunOS: add "-lsocket -lnsl" to LDFLAGS
 
-CFLAGS	?= -O2
 WARNING_CFLAGS ?= -Wall -W -Wdeclaration-after-statement -Wno-unused-function -Wno-unused-value
 LDFLAGS ?=
 
@@ -23,6 +22,9 @@ endif
 
 ifdef DEBUG
 LOCAL_CFLAGS += -g3
+CFLAGS	?= -O0
+else
+CFLAGS	?= -O2
 endif
 
 # if we're running on Windows, build for Windows
